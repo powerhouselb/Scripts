@@ -1,0 +1,58 @@
+@echo off
+color 2f
+:top
+cls
+echo ***********************************************
+echo		  WebM Conversion Tool
+echo ***********************************************
+echo.
+echo.
+dir /b *.avi *.mov *.mp4 *.3gp *.flv
+echo.
+echo.
+echo What video do you want to convert?
+echo Copy and paste from the list above.
+echo More than one word in the title?  Use
+echo quotes around JUST THE TITLE.
+set /p input=
+echo.
+echo.
+echo Let's talk quality/file size
+echo The scale is 0 to 63.
+echo 0 is the best quality with the largest size.
+echo 63 is the polar oposite.
+set /p conrate=
+echo.
+echo.
+echo Do you know the Bitrate you want?
+echo Enter the desired number.
+echo.
+echo Sample Format: 1484k OR 3M
+set /p bitr=
+echo.
+echo.
+echo What's the output name? Don't worry about the
+echo extension.  I got you.
+set /p output=
+echo.
+echo.
+echo Do you want to keep the audio (y/n)
+set /p audio=
+if %audio%==y goto yes
+if %audio%==n goto no
+:yes
+ffmpeg -i %input% -c:v libvpx-vp9 -crf %conrate% -minrate %bitr% -maxrate %bitr% -b:v %bitr% -c:a libvorbis %output%.webm
+goto again
+echo.
+echo.
+echo.
+:no 
+ffmpeg -i %input% -c:v libvpx-vp9 -crf 15 -minrate 1484k -maxrate 1484k -b:v 1484k -an %output%.webm
+echo.
+echo.
+echo.
+:again
+echo Again? (y/n)
+set /p again=
+if %again%==y goto top 
+else exit
